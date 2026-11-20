@@ -35,7 +35,7 @@ python -m compileall -q app.py cloudguard cpsa
 Expected result:
 
 ```text
-85 passed
+87 passed
 ```
 
 Then verify the two CloudGuard fixture variants:
@@ -86,6 +86,22 @@ demonstration is needed:
 ```powershell
 Remove-Item .\cloudguard_history.db -ErrorAction SilentlyContinue
 ```
+
+### What the dashboard means by UNKNOWN
+
+`UNKNOWN` is deliberately different from both `PASS` and `FAIL`. It means the
+scanner could not collect the metadata needed to evaluate a rule, for example
+because of an access-denied, throttling, timeout, or unsupported-API error.
+CloudGuard never converts that situation into a pass. The finding detail panel
+shows the error class and the catalogue's required metadata APIs so the result
+can be investigated.
+
+The dashboard's **Read-only scope and known limitations** panel lists the
+metadata API calls used by every CloudGuard rule. These calls describe the
+scanner's intended read-only scope; the current application still runs only
+against moto. The panel also states the important simulation limitations,
+including inferred attack paths, known IAM-pattern coverage, and unsupported
+in-place RDS encryption remediation.
 
 ---
 
@@ -173,6 +189,33 @@ GroupNumber_6/
 ```
 
 ---
+
+## 3. Requirements coverage and honest scope
+
+The current implementation intentionally targets the safe, deterministic
+CloudGuard MVP rather than every feature proposed for a production platform.
+
+| Capability | Status | Where to verify |
+|---|---|---|
+| S3, EC2, IAM, and RDS metadata scanning | Implemented | `cloudguard/collectors.py` |
+| Declarative rules and fixed remediation text | Implemented | `cloudguard/catalogue.json` |
+| PASS/FAIL/UNKNOWN handling | Implemented | `cloudguard/collectors.py`, fault tests |
+| Bounded retries and fault injection | Implemented | `cloudguard/collectors.py`, `cloudguard/faults.py` |
+| Coverage, posture, and severity-weighted risk | Implemented | `cloudguard/scoring.py` |
+| Interactive attack-path graph | Implemented | `cloudguard/attack_paths.py`, dashboard |
+| Moto-only verified remediation | Implemented | `cloudguard/remediation.py` |
+| SQLite scan history and drift | Implemented | `cloudguard/history.py` |
+| Fixture evaluation with classification metrics | Implemented | `cloudguard/evaluation.py` |
+| CPSA credential-hygiene integration | Implemented | `cpsa/`, dashboard credential tabs |
+| Real AWS scanning | Not in scope | The application is deliberately moto-only |
+| AI/LLM remediation | Not in scope | Remediation uses fixed catalogue templates |
+| Exhaustive IAM privilege-escalation analysis | Partial | Known patterns are documented; coverage is not exhaustive |
+| Formal legal or CIS certification | Not provided | CIS/GDPR/DPDP mappings are informational |
+
+The dashboard's Rule coverage table shows whether each catalogue rule was
+returned by the current scan and which status it received. The catalogue
+validation tests also ensure each current rule has the required descriptive
+metadata and at least one declared read-only API call.
 
 ## 4. Run every major function
 
@@ -723,5 +766,5 @@ For a short demonstration:
 python -m pytest -q
 ```
 
-The expected current result is **85 passed**.
+The expected current result is **87 passed**.
 "# Cloud-Guard" 

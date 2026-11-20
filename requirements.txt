@@ -1,0 +1,14 @@
+# Required
+boto3
+moto>=5.0
+bcrypt
+argon2-cffi
+pandas
+pytest
+# Optional UI: the core CLI, notebook, and tests do not require Streamlit.
+streamlit
+networkx
+plotly
+# Optional (better strength scoring). If this fails to install on your Python version
+# (it did on Colab's Python 3.13), the tool automatically falls back to a built-in estimator.
+# zxcvbn

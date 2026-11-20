@@ -1,0 +1,18 @@
+# sample_app.py -- deliberately insecure demo code used to show the secrets scanner.
+# All values below are FAKE (the AWS ones are Amazon's published documentation examples).
+import boto3
+
+AWS_ACCESS_KEY_ID = "AKIAIOSFODNN7EXAMPLE"
+aws_secret_access_key = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+DB_PASSWORD = "Sup3rS3cretDbPass!"
+DATABASE_URL = "postgres://admin:hunter2hunter2@db.internal.example.com:5432/prod"
+API_TOKEN = "9fA2kLmQ8xZpV3nT7wRb1YcD5eHjU0sG"
+
+PRIVATE_KEY = """-----BEGIN RSA PRIVATE KEY-----
+MIIEowIBAAKCAQEAfakefakefakefakefakefakefakefakefakefakefake
+-----END RSA PRIVATE KEY-----"""
+
+def connect():
+    # This line is fine: the secret comes from the environment, not the source code.
+    import os
+    return boto3.client("dynamodb", region_name=os.environ["AWS_REGION"])

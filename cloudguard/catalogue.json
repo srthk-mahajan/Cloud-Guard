@@ -1,0 +1,98 @@
+[
+  {
+    "id": "S3-001",
+    "service": "s3",
+    "title": "S3 bucket has public access",
+    "severity": "CRITICAL",
+    "api_calls": ["s3:ListBuckets", "s3:GetPublicAccessBlock", "s3:GetBucketAcl"],
+    "check_reference": "S3 public access block and ACL",
+    "cis": "CIS AWS Foundations 1.5 2.1.5 (partial)",
+    "gdpr_dpdp": "Public exposure can disclose personal data; verify lawful processing and access controls.",
+    "rationale": "Internet-readable storage can expose confidential data.",
+    "remediation": "Enable S3 Block Public Access and remove public ACL grants."
+  },
+  {
+    "id": "S3-002",
+    "service": "s3",
+    "title": "S3 bucket encryption is not enabled",
+    "severity": "HIGH",
+    "api_calls": ["s3:ListBuckets", "s3:GetBucketEncryption"],
+    "check_reference": "S3 default encryption",
+    "cis": "CIS AWS Foundations 1.5 2.1.1 (partial)",
+    "gdpr_dpdp": "Encryption is a recommended safeguard for stored personal data.",
+    "rationale": "Unencrypted objects are exposed if storage access is compromised.",
+    "remediation": "Configure SSE-S3 or SSE-KMS default bucket encryption."
+  },
+  {
+    "id": "S3-003",
+    "service": "s3",
+    "title": "S3 bucket versioning is disabled",
+    "severity": "MEDIUM",
+    "api_calls": ["s3:ListBuckets", "s3:GetBucketVersioning"],
+    "check_reference": "S3 versioning",
+    "cis": "Not directly covered by CIS AWS Foundations 1.5",
+    "gdpr_dpdp": "Versioning can support recovery and integrity investigations.",
+    "rationale": "Without versioning, accidental or malicious deletion is harder to recover.",
+    "remediation": "Enable versioning where recovery requirements justify it."
+  },
+  {
+    "id": "EC2-001",
+    "service": "ec2",
+    "title": "Security group allows SSH or RDP from the internet",
+    "severity": "HIGH",
+    "api_calls": ["ec2:DescribeSecurityGroups"],
+    "check_reference": "Restricted management ports",
+    "cis": "CIS AWS Foundations 1.5 4.3 (partial)",
+    "gdpr_dpdp": "Restricting administrative access reduces unauthorized processing risk.",
+    "rationale": "Internet-reachable management ports are a common intrusion path.",
+    "remediation": "Restrict SSH/RDP to approved networks or a private management path."
+  },
+  {
+    "id": "EC2-002",
+    "service": "ec2",
+    "title": "EC2 instance uses an over-permissive role",
+    "severity": "CRITICAL",
+    "api_calls": ["ec2:DescribeInstances", "iam:GetRole", "iam:ListRolePolicies", "iam:GetRolePolicy"],
+    "check_reference": "Least privilege instance profile",
+    "cis": "CIS AWS Foundations 1.5 1.16 (partial)",
+    "gdpr_dpdp": "Excess privileges increase the impact of an account compromise.",
+    "rationale": "A compromised workload can use wildcard permissions to access or alter data.",
+    "remediation": "Replace wildcard permissions with a narrowly scoped instance role."
+  },
+  {
+    "id": "RDS-001",
+    "service": "rds",
+    "title": "RDS instance is publicly accessible",
+    "severity": "CRITICAL",
+    "api_calls": ["rds:DescribeDBInstances"],
+    "check_reference": "RDS network exposure",
+    "cis": "CIS AWS Foundations 1.5 2.3.1 (partial)",
+    "gdpr_dpdp": "Public database exposure can disclose personal data.",
+    "rationale": "Databases should not accept direct public network connections.",
+    "remediation": "Disable PubliclyAccessible and use private subnets and controlled access."
+  },
+  {
+    "id": "RDS-002",
+    "service": "rds",
+    "title": "RDS storage encryption is disabled",
+    "severity": "HIGH",
+    "api_calls": ["rds:DescribeDBInstances"],
+    "check_reference": "RDS storage encryption",
+    "cis": "CIS AWS Foundations 1.5 2.3.1 (partial)",
+    "gdpr_dpdp": "Encryption at rest is an appropriate technical safeguard.",
+    "rationale": "Unencrypted database storage increases exposure after infrastructure access.",
+    "remediation": "Create an encrypted replacement instance and migrate data."
+  },
+  {
+    "id": "IAM-ESC-001",
+    "service": "iam",
+    "title": "IAM policy permits privilege escalation",
+    "severity": "CRITICAL",
+    "api_calls": ["iam:ListUsers", "iam:ListUserPolicies", "iam:GetUserPolicy", "iam:ListAttachedUserPolicies", "iam:GetPolicy", "iam:GetPolicyVersion"],
+    "check_reference": "Privilege escalation patterns",
+    "cis": "CIS AWS Foundations 1.5 1.16 (partial)",
+    "gdpr_dpdp": "Least privilege limits unauthorized personal-data processing.",
+    "rationale": "PassRole, service creation, policy mutation, or wildcard action/resource permissions can elevate access.",
+    "remediation": "Remove escalation actions, restrict service creation, and scope actions and resources explicitly."
+  }
+]

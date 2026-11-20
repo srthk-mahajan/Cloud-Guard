@@ -1,0 +1,7 @@
+__pycache__/
+.pytest_cache/
+*.pyc
+audit_report.csv
+*.jsonl
+cloudguard_history.db
+.venv/
